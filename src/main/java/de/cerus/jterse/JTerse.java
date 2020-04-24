@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.Buffer;
 
 public class JTerse {
 
@@ -31,20 +30,22 @@ public class JTerse {
         while (true) {
             try {
                 String input = bufferedReader.readLine();
-                if(input == null) throw new IllegalStateException();
+                if (input == null) throw new IllegalStateException();
 
-                if(input.toLowerCase().matches("q|quit|exit")) {
+                if (input.toLowerCase().matches("q|quit|exit")) {
                     System.out.println("Goodbye!");
                     break;
                 }
 
-                // Print everything back to console for now
-                System.out.println(" > "+input);
+                interpreter.run(input);
             } catch (IOException e) {
                 e.printStackTrace();
                 break;
             }
         }
+
+        interpreter.getGlobalVariables().forEach((s, variable) ->
+                System.out.println(s + "\t\t: " + (variable == null ? "N/A" : variable.toString())));
 
         try {
             bufferedReader.close();

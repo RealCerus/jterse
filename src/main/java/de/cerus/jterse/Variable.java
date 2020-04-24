@@ -13,6 +13,16 @@ public class Variable {
         this.value = value;
     }
 
+    public static Variable of(Object o) {
+        if (o instanceof Float)
+            return new Variable(Type.FLOAT, o);
+        if (o instanceof Integer)
+            return new Variable(Type.INT, o);
+        if (o instanceof String)
+            return new Variable(Type.STRING, o);
+        return null;
+    }
+
     public int toInt() {
         return (int) getValue();
     }
@@ -21,8 +31,34 @@ public class Variable {
         return (float) getValue();
     }
 
-    public String toString() {
+    public String toStr() {
         return (String) getValue();
+    }
+
+    public Object val() {
+        switch (type) {
+            case INT:
+                return toInt();
+            case FLOAT:
+                return toFloat();
+            case STRING:
+                return toStr();
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        switch (type) {
+            case INT:
+                return String.valueOf((int) value);
+            case FLOAT:
+                return String.valueOf((float) value);
+            case STRING:
+                return (String) value;
+            default:
+                return "Variable{" + type.name() + ", " + value.toString() + "}";
+        }
     }
 
     public Type getType() {
