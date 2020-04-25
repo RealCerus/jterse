@@ -24,6 +24,8 @@ public class JTerse {
             // Parse file arguments n stuff
             try {
                 interpreter.run(new File(String.join(" ", args)));
+
+                ConsoleReader.dispose();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("Failed to run interpreter");
