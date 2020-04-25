@@ -2,17 +2,15 @@ package de.cerus.jterse;
 
 import de.cerus.jterse.util.ConsoleReader;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
 public class JTerse {
 
     public static void main(String[] args) {
         boolean noTab = false;
-        if(args.length >= 1 && args[0].equalsIgnoreCase("--notab")) {
+        if (args.length >= 1 && args[0].equalsIgnoreCase("--notab")) {
             noTab = true;
             args = Arrays.copyOfRange(args, 1, args.length);
         }

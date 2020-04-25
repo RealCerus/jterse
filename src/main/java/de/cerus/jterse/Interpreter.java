@@ -59,7 +59,8 @@ public class Interpreter {
                 }
 
                 if (value(command) == null)
-                    reportError(command, "Invalid command");
+                    reportError(command, "Invalid command" + ((command.contains(" ") && !noTab)
+                            ? " (Hint: Did you forget --notab?)" : ""));
                 break;
         }
     }
@@ -86,6 +87,8 @@ public class Interpreter {
             }
         } else if (command.equals("pop")) {
             return stack.pop();
+        } else if (command.equals("peek")) {
+            return stack.peek();
         } else if (command.startsWith("\"") && command.endsWith("\"")) {
             return command.substring(1, command.length() - 1);
         } else if (command.matches("[0-9.]+")) {
