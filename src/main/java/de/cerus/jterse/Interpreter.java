@@ -139,7 +139,7 @@ public class Interpreter {
         if (line.startsWith(";")) return;
 
         String[] split = line.split(noTab ? "\\s+" : "\t+");
-        String command = split[0];
+        String command = split[0].replaceAll("^\\s+", "");
         split = line.substring(command.length()).trim().split(" ");
         String[] args = split;
 
