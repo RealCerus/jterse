@@ -1,27 +1,31 @@
-decl	&null
+;
+; This script requires the --notab argument!
+;
 
-out		"This will print 'null':"
-out		@null
+decl    &null
 
-decl	&val
-@val	"value"
+out     "This will print 'null':"
+out     @null
 
-out		"This will print 'value':"
-out		@val
+decl    &val
+@val    "value"
+
+out     "This will print 'value':"
+out     @val
 
 ; I'm a comment
 
-add		5 5
+add     5 5
 push
 
-sub		pop 8
+sub     pop 8
 push
 
-mult	pop 3
+mult    pop 3
 push
 
-decl	&math
-@math	pop
+decl    &math
+@math   pop
 
-out		"This will print '6.0':"
-out		@math
+out     "This will print '6.0':"
+out     @math
