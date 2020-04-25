@@ -9,14 +9,17 @@ import java.util.*;
 
 public class Interpreter {
 
-    private Functions functions = new Functions(this);
+    private final Functions functions = new Functions(this);
 
-    private Map<String, Variable> globalVariables = new HashMap<>();
-    private Deque<Float> stack = new LinkedList<>();
+    private final Map<String, Variable> globalVariables = new HashMap<>();
+    private final Deque<Float> stack = new LinkedList<>();
 
     private boolean noTab = false;
     private float previous = -1f;
     private int currentLine = 0;
+
+    private Deque<Boolean> exec = new LinkedList<>();
+    private int blocks = 0;
 
     public Interpreter(boolean noTab) {
         this.noTab = noTab;
@@ -27,7 +30,17 @@ public class Interpreter {
     }
 
     private void evaluate(String command, String[] args) {
+        if (blocks > 0 && !exec.isEmpty() && !exec.peek() && !command.equalsIgnoreCase("end")) return;
+
         switch (command.toLowerCase()) {
+            case "end":
+                blocks--;
+                if(blocks < 0) {
+                    reportError(command, "Unexpected token");
+                    break;
+                }
+                exec.pop();
+                break;
             case "push":
                 stack.push(previous);
                 break;
@@ -52,6 +65,26 @@ public class Interpreter {
             case "mod":
                 previous = functions.mathMod(command, args);
                 break;
+            case "eq":
+                exec.push(functions.condEq(command, args));
+                blocks++;
+                break;
+            case "gt":
+                exec.push(functions.condGt(command, args));
+                blocks++;
+                break;
+            case "lt":
+                exec.push(functions.condLt(command, args));
+                blocks++;
+                break;
+            case "ge":
+                exec.push(functions.condGe(command, args));
+                blocks++;
+                break;
+            case "le":
+                exec.push(functions.condLe(command, args));
+                blocks++;
+                break;
             default:
                 if (command.startsWith("@")) {
                     functions.setVar(command, args);
@@ -70,7 +103,7 @@ public class Interpreter {
         if (value == null) reportError(command, "No value available");
 
         if (!value.getClass().isAssignableFrom(expected))
-            reportError(command, "Unexpected value type; exptected "
+            reportError(command, "Unexpected value type; expected "
                     + expected.getSimpleName() + " but got " + value.getClass().getSimpleName());
         return (T) value;
     }
@@ -140,7 +173,10 @@ public class Interpreter {
 
     public void reset() {
         globalVariables.clear();
+        stack.clear();
+        exec.clear();
         currentLine = 0;
+        blocks = 0;
     }
 
     public Map<String, Variable> getGlobalVariables() {

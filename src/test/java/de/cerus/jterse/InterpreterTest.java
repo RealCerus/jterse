@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class InterpreterTest {
 
-    private Interpreter interpreter = new Interpreter(true);
+    private final Interpreter interpreter = new Interpreter(true);
 
     @Test
     public void testBasicScript() {
@@ -29,6 +29,23 @@ public class InterpreterTest {
         Assert.assertNull(vars.get("null"));
         Assert.assertEquals("value", vars.get("val").toStr());
         Assert.assertEquals(6.0f, vars.get("math").toFloat(), 0);
+    }
+
+    @Test
+    public void testCondScript() {
+        interpreter.reset();
+
+        try {
+            interpreter.run(new File("./examples/cond.terse"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        Map<String, Variable> vars = interpreter.getGlobalVariables();
+        for (int i = 1; i < 7; i++) {
+            Assert.assertTrue(vars.containsKey("works" + i));
+        }
     }
 
 }

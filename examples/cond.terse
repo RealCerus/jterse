@@ -1,0 +1,64 @@
+;
+; This script requires the --notab argument!
+;
+
+decl        &int
+@int        10
+
+decl        &otherInt
+@otherInt   5
+
+eq          @int @int
+out         "@int & @int are equal"
+decl        &works1
+eq          @int @otherInt
+out         "@int & @otherInt are equal"
+end
+out         "Just a random out"
+decl        &works2
+end
+
+gt          @int @otherInt
+lt          @otherInt @int
+out         "Yep. All good."
+decl        &works3
+end
+end
+
+eq          "String" "Other string"
+out         "String eq 1"
+end
+
+eq          "Other string" "Other string"
+out         "String eq 2"
+decl        &works4
+end
+
+eq          "Str :D haha" "Other string"
+out         "String eq 3"
+end
+
+eq          "" ""
+eq          "" ""
+eq          "" ""
+eq          "" ""
+
+out         "Nested conditionals are pretty cool!"
+decl        &works5
+
+lt          10 1
+end
+gt          10 1
+lt          2 1
+out         "This should never print"
+decl        &ohNo
+end
+end
+
+out         ":D"
+decl        &works6
+
+end
+end
+end
+end
