@@ -110,7 +110,14 @@ public class Functions {
         boolean str = false;
         StringBuilder strBuilder = new StringBuilder();
 
+        int i = 0;
         for (String arg : args) {
+            i++;
+
+            if ((arg.equals("INT") || arg.equals("FLOAT") || arg.equals("String"))
+                    && args[args.length - 1].equals(arg) && i == args.length)
+                continue;
+
             if (arg.startsWith("\"") && arg.endsWith("\"")) {
                 if (rawArg1 == null) {
                     rawArg1 = arg;
@@ -160,6 +167,37 @@ public class Functions {
 
         Object o1 = interpreter.value(rawArg1);
         Object o2 = interpreter.value(rawArg2);
+
+        if(o1 == null ||o2 == null) {
+            interpreter.reportError(String.join(" ", args), "Failed to parse arguments");
+        }
+
+        String lastArg = args[args.length - 1];
+        if (lastArg.equals("FLOAT") || lastArg.equals("INT")) {
+            if (!(o1 instanceof Float)) {
+                try {
+                    o1 = Float.parseFloat(o1.toString());
+                } catch (NumberFormatException ignored) {
+                    interpreter.reportError(String.join(" ", args), "Failed to cast " + o1 + " to " + lastArg);
+                }
+            }
+            if (!(o2 instanceof Float)) {
+                try {
+                    o2 = Float.parseFloat(o2.toString());
+                } catch (NumberFormatException ignored) {
+                    interpreter.reportError(String.join(" ", args), "Failed to cast " + o2 + " to " + lastArg);
+                }
+            }
+        }
+
+        if (lastArg.equals("STRING")) {
+            if (!(o1 instanceof String)) {
+                o1 = o1.toString();
+            }
+            if (!(o2 instanceof String)) {
+                o2 = o2.toString();
+            }
+        }
 
         if (o1.getClass() != o2.getClass()) {
             interpreter.reportError(rawArg1 + "; " + rawArg2, "Different types: Got "

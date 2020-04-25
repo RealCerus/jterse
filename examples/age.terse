@@ -1,0 +1,9 @@
+decl    &age
+out     "How old are you? "
+@age    in
+ge      @age 18 INT
+out     "You are at least 18 years old!"
+end
+lt      @age 18 INT
+out     "You are under 18 years old!"
+end
