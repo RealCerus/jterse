@@ -110,11 +110,15 @@ public class Interpreter {
         split = line.substring(command.length()).trim().split(" ");
         String[] args = split;
 
-        evaluate(command, args);
+        try {
+            evaluate(command, args);
+        } catch (ParseException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void reportError(String stub, String details) {
-        throw new IllegalStateException("Error at line " + (currentLine + 1)
+        throw new ParseException("Error at line " + (currentLine + 1)
                 + (stub == null ? "" : " (here: '" + stub + "')")
                 + (details == null ? "" : " [details: " + details + "]"));
     }
