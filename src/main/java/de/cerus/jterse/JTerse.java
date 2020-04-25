@@ -1,14 +1,24 @@
 package de.cerus.jterse;
 
+import de.cerus.jterse.util.ConsoleReader;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class JTerse {
 
     public static void main(String[] args) {
-        Interpreter interpreter = new Interpreter();
+        boolean noTab = false;
+        if(args.length >= 1 && args[0].equalsIgnoreCase("--notab")) {
+            noTab = true;
+            args = Arrays.copyOfRange(args, 1, args.length);
+        }
+
+        ConsoleReader.setup();
+        Interpreter interpreter = new Interpreter(noTab);
 
         if (args.length > 0) {
             // Parse file arguments n stuff
@@ -22,14 +32,12 @@ public class JTerse {
         }
 
         // Start interpreter in REPL mode
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-
         System.out.println("Interpreter started in REPL mode");
         System.out.println();
 
         while (true) {
             try {
-                String input = bufferedReader.readLine();
+                String input = ConsoleReader.readLine();
                 if (input == null) throw new IllegalStateException();
 
                 if (input.toLowerCase().matches("q|quit|exit")) {
@@ -48,7 +56,7 @@ public class JTerse {
                 System.out.println(s + "\t\t: " + (variable == null ? "N/A" : variable.toString())));
 
         try {
-            bufferedReader.close();
+            ConsoleReader.dispose();
         } catch (IOException e) {
             e.printStackTrace();
         }

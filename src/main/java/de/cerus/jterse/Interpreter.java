@@ -1,9 +1,9 @@
 package de.cerus.jterse;
 
-import java.io.BufferedReader;
+import de.cerus.jterse.util.ConsoleReader;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -14,20 +14,22 @@ public class Interpreter {
     private Map<String, Variable> globalVariables = new HashMap<>();
     private Deque<Float> stack = new LinkedList<>();
 
+    private boolean noTab = false;
     private float previous = -1f;
     private int currentLine = 0;
 
+    public Interpreter(boolean noTab) {
+        this.noTab = noTab;
+    }
+
     public Interpreter() {
+        this(false);
     }
 
     private void evaluate(String command, String[] args) {
         switch (command.toLowerCase()) {
             case "push":
                 stack.push(previous);
-                break;
-            case "pop":
-                // Throw away the current value of the stack
-                stack.pop();
                 break;
             case "decl":
                 functions.declareVar(command, args);
@@ -53,7 +55,11 @@ public class Interpreter {
             default:
                 if (command.startsWith("@")) {
                     functions.setVar(command, args);
+                    break;
                 }
+
+                if (value(command) == null)
+                    reportError(command, "Invalid command");
                 break;
         }
     }
@@ -73,8 +79,8 @@ public class Interpreter {
             Variable var = globalVariables.getOrDefault(command.substring(1), null);
             return var == null ? null : var.val();
         } else if (command.equals("in")) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-                return reader.readLine();
+            try {
+                return ConsoleReader.readLine();
             } catch (IOException e) {
                 reportError(command, "Failed to read user input");
             }
@@ -96,7 +102,7 @@ public class Interpreter {
         if (line.equals("") || line.matches("\\s+")) return;
         if (line.startsWith(";")) return;
 
-        String[] split = line.split("\t+");
+        String[] split = line.split(noTab ? "\\s+" : "\t+");
         String command = split[0];
         split = line.substring(command.length()).trim().split(" ");
         String[] args = split;
@@ -105,7 +111,7 @@ public class Interpreter {
     }
 
     public void reportError(String stub, String details) {
-        throw new IllegalStateException("Error at line " + currentLine
+        throw new IllegalStateException("Error at line " + (currentLine + 1)
                 + (stub == null ? "" : " (here: '" + stub + "')")
                 + (details == null ? "" : " [details: " + details + "]"));
     }
